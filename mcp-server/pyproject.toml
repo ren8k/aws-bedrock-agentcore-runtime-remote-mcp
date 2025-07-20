@@ -1,0 +1,12 @@
+[project]
+name = "mcp-server"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "bedrock-agentcore-starter-toolkit==0.1.0",
+    "boto3==1.39.9",
+    "fastmcp==2.10.5",
+    "mcp==1.11.0",
+]
