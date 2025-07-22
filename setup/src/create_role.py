@@ -132,12 +132,27 @@ def create_agentcore_role(agent_name: str) -> dict:
         time.sleep(10)
     except client.exceptions.EntityAlreadyExistsException:
         print("Role already exists -- deleting and creating it again")
-        policies = client.list_role_policies(RoleName=agentcore_role_name, MaxItems=100)
-        print("policies:", policies)
-        for policy_name in policies["PolicyNames"]:
+
+        # Check and detach inline policies
+        inline_policies = client.list_role_policies(
+            RoleName=agentcore_role_name, MaxItems=100
+        )
+        print("inline policies:", inline_policies)
+        for policy_name in inline_policies["PolicyNames"]:
             client.delete_role_policy(
                 RoleName=agentcore_role_name, PolicyName=policy_name
             )
+
+        # Check and detach managed policies
+        managed_policies = client.list_attached_role_policies(
+            RoleName=agentcore_role_name, MaxItems=100
+        )
+        print("managed policies:", managed_policies)
+        for policy in managed_policies["AttachedPolicies"]:
+            client.detach_role_policy(
+                RoleName=agentcore_role_name, PolicyArn=policy["PolicyArn"]
+            )
+
         print(f"deleting {agentcore_role_name}")
         client.delete_role(RoleName=agentcore_role_name)
         print(f"recreating {agentcore_role_name}")
