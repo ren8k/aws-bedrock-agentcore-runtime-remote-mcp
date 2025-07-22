@@ -2,29 +2,17 @@ import asyncio
 import os
 import sys
 
-from boto3.session import Session
 from dotenv import load_dotenv
 from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
 
-load_dotenv()
 
-
-async def main():
-    boto_session = Session()
-    region = boto_session.region_name
-    agent_arn = os.getenv("AGENT_ARN")
-    bearer_token = os.getenv("COGNITO_ACCESS_TOKEN")
-
+def get_mcp_url(agent_arn: str, region: str = "us-west-2") -> str:
     encoded_arn = agent_arn.replace(":", "%3A").replace("/", "%2F")
-    mcp_url = f"https://bedrock-agentcore.{region}.amazonaws.com/runtimes/{encoded_arn}/invocations?qualifier=DEFAULT"
-    headers = {
-        "authorization": f"Bearer {bearer_token}",
-        "Content-Type": "application/json",
-    }
+    return f"https://bedrock-agentcore.{region}.amazonaws.com/runtimes/{encoded_arn}/invocations?qualifier=DEFAULT"
 
-    print(f"\nConnecting to: {mcp_url}")
 
+async def connect_to_server(mcp_url: str, headers: dict) -> None:
     try:
         async with streamablehttp_client(
             mcp_url, headers, timeout=120, terminate_on_close=False
@@ -58,6 +46,25 @@ async def main():
     except Exception as e:
         print(f"❌ Error connecting to MCP server: {e}")
         sys.exit(1)
+
+
+async def main():
+    load_dotenv()
+    agent_arn = os.getenv("AGENT_ARN")
+    bearer_token = os.getenv("COGNITO_ACCESS_TOKEN")
+    if not (agent_arn and bearer_token):
+        raise ValueError(
+            "Required environment variables AGENT_ARN and COGNITO_ACCESS_TOKEN are not set."
+        )
+
+    mcp_url = get_mcp_url(agent_arn)
+    headers = {
+        "authorization": f"Bearer {bearer_token}",
+        "Content-Type": "application/json",
+    }
+
+    print(f"\nConnect to: {mcp_url}")
+    await connect_to_server(mcp_url, headers)
 
 
 if __name__ == "__main__":
