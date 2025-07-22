@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 
 def cognito_authenticate(
-    username: str, password: str, client_id: str, region="us-west-2"
+    username: str, password: str, client_id: str, region: str = "us-west-2"
 ) -> dict:
     """
     AWS Cognitoでユーザー認証を行う関数
@@ -52,14 +52,14 @@ def get_access_key(response: dict) -> str:
 
 def main() -> None:
     load_dotenv()
-    username = os.getenv("COGNITO_USERNAME")
+    username: str | None = os.getenv("COGNITO_USERNAME")
     password = os.getenv("COGNITO_PASSWORD")
     client_id = os.getenv("COGNITO_CLIENT_ID")
     if not (username and password and client_id):
         raise ValueError("Cognito credentials are not set in environment variables.")
 
     response = cognito_authenticate(username, password, client_id)
-    print(f"アクセストークン: {get_access_key(response)}")
+    print(f"Access Token: {get_access_key(response)}")
 
 
 if __name__ == "__main__":
