@@ -1,11 +1,21 @@
 import json
+import os
 import time
 
 import boto3
 from boto3.session import Session
+from dotenv import load_dotenv
 
 
-def create_agentcore_role(agent_name):
+def create_agentcore_role(agent_name: str) -> dict:
+    """Create an IAM role for the agent core.
+
+    Args:
+        agent_name (str): The name of the agent.
+
+    Returns:
+        dict: The response from the IAM create_role API call.
+    """
     client = boto3.client("iam")
     agentcore_role_name = f"agentcore-{agent_name}-role"
     boto_session = Session()
@@ -111,7 +121,7 @@ def create_agentcore_role(agent_name):
 
     assume_role_policy_document_json = json.dumps(assume_role_policy_document)
     role_policy_document = json.dumps(role_policy)
-    # Create IAM Role for the Lambda function
+    # Create IAM Role for the AgentCore
     try:
         agentcore_iam_role = client.create_role(
             RoleName=agentcore_role_name,
@@ -136,7 +146,7 @@ def create_agentcore_role(agent_name):
             AssumeRolePolicyDocument=assume_role_policy_document_json,
         )
 
-    # Attach the AWSLambdaBasicExecutionRole policy
+    # Attach the AgentCore policy
     print(f"attaching role policy {agentcore_role_name}")
     try:
         client.put_role_policy(
@@ -148,3 +158,15 @@ def create_agentcore_role(agent_name):
         print(e)
 
     return agentcore_iam_role
+
+
+def main() -> None:
+    load_dotenv()
+    agent_name = os.getenv("AGENT_NAME", "default-agent")
+
+    role = create_agentcore_role(agent_name)
+    print(f"Created role: {role['Role']['Arn']}")
+
+
+if __name__ == "__main__":
+    main()
