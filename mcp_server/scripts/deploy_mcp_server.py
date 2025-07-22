@@ -55,7 +55,9 @@ def main() -> None:
     agent_name = os.getenv(
         "AGENT_NAME"
     )  # Must start with a letter, contain only letters/numbers/underscores, and be 1-48 characters long.
-    print(agent_name)
+    if not (cognito_client_id and cognito_discovery_url and role_arn and agent_name):
+        raise ValueError("Required environment variables are not set.")
+
     deploy_mcp_server(cognito_client_id, cognito_discovery_url, role_arn, agent_name)
 
 
