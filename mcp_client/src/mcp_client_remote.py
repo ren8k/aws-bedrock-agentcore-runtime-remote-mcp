@@ -7,7 +7,7 @@ from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
 
 
-def get_mcp_url(agent_arn: str, region: str = "us-west-2") -> str:
+def get_mcp_endpoint(agent_arn: str, region: str = "us-west-2") -> str:
     encoded_arn = agent_arn.replace(":", "%3A").replace("/", "%2F")
     return f"https://bedrock-agentcore.{region}.amazonaws.com/runtimes/{encoded_arn}/invocations?qualifier=DEFAULT"
 
@@ -57,7 +57,7 @@ async def main():
             "Required environment variables AGENT_ARN and COGNITO_ACCESS_TOKEN are not set."
         )
 
-    mcp_endpoint = get_mcp_url(agent_arn)
+    mcp_endpoint = get_mcp_endpoint(agent_arn)
     headers = {
         "authorization": f"Bearer {bearer_token}",
         "Content-Type": "application/json",
