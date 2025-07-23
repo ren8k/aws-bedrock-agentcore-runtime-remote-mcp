@@ -6,26 +6,27 @@ from strands import Agent
 from strands.tools.mcp import MCPClient
 
 
+def get_mcp_endpoint(agent_arn: str, region: str = "us-west-2") -> str:
+    encoded_arn = agent_arn.replace(":", "%3A").replace("/", "%2F")
+    return f"https://bedrock-agentcore.{region}.amazonaws.com/runtimes/{encoded_arn}/invocations?qualifier=DEFAULT"
+
+
 def main() -> None:
     load_dotenv()
-
-    AGENT_ARN = os.getenv("AGENT_ARN")
-    BEARER_TOKEN = os.getenv("COGNITO_ACCESS_TOKEN")
-    region = "us-west-2"
-
-    encoded_arn = AGENT_ARN.replace(":", "%3A").replace("/", "%2F")
-    MCP_SERVER_ENDPOINT = f"https://bedrock-agentcore.{region}.amazonaws.com/runtimes/{encoded_arn}/invocations?qualifier=DEFAULT"
+    agent_arn = os.getenv("AGENT_ARN")
+    bearer_token = os.getenv("COGNITO_ACCESS_TOKEN")
+    mcp_server_endpoint = get_mcp_endpoint(agent_arn)
 
     mcp_client = MCPClient(
         lambda: streamablehttp_client(
-            MCP_SERVER_ENDPOINT, headers={"Authorization": f"Bearer {BEARER_TOKEN}"}
+            mcp_server_endpoint, headers={"Authorization": f"Bearer {bearer_token}"}
         )
     )
 
     with mcp_client:
         tools = mcp_client.list_tools_sync()
         agent = Agent(tools=tools)
-        agent("私は ren8k です。挨拶してください")
+        agent("1+2は？")
 
 
 if __name__ == "__main__":
