@@ -12,10 +12,10 @@ def get_mcp_url(agent_arn: str, region: str = "us-west-2") -> str:
     return f"https://bedrock-agentcore.{region}.amazonaws.com/runtimes/{encoded_arn}/invocations?qualifier=DEFAULT"
 
 
-async def connect_to_server(mcp_url: str, headers: dict) -> None:
+async def connect_to_server(mcp_endpoint: str, headers: dict) -> None:
     try:
         async with streamablehttp_client(
-            mcp_url, headers, timeout=120, terminate_on_close=False
+            mcp_endpoint, headers, timeout=120, terminate_on_close=False
         ) as (
             read_stream,
             write_stream,
@@ -57,14 +57,14 @@ async def main():
             "Required environment variables AGENT_ARN and COGNITO_ACCESS_TOKEN are not set."
         )
 
-    mcp_url = get_mcp_url(agent_arn)
+    mcp_endpoint = get_mcp_url(agent_arn)
     headers = {
         "authorization": f"Bearer {bearer_token}",
         "Content-Type": "application/json",
     }
 
-    print(f"\nConnect to: {mcp_url}")
-    await connect_to_server(mcp_url, headers)
+    print(f"\nConnect to: {mcp_endpoint}")
+    await connect_to_server(mcp_endpoint, headers)
 
 
 if __name__ == "__main__":
