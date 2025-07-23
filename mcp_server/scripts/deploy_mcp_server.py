@@ -33,13 +33,12 @@ def deploy_mcp_server(
         protocol="MCP",
         agent_name=agent_name,
     )
-    print("Configuration completed ✓")
-    print(response)
+    print("Configuration completed ✓\n")
 
     print("Launching MCP server to AgentCore Runtime...")
     print("This may take several minutes...")
     launch_result = agentcore_runtime.launch()
-    print("Launch completed ✓")
+    print("Launch completed ✓\n")
     print(f"Agent ARN: {launch_result.agent_arn}")
     print(f"Agent ID: {launch_result.agent_id}")
 
