@@ -23,6 +23,7 @@ def openai_o3_search(
     response = client.responses.create(
         model="o3",
         tools=[{"type": "web_search_preview"}],
+        tool_choice={"type": "web_search_preview"},  # force the use of the web_search
         input=query,
     )
     return response.output_text
