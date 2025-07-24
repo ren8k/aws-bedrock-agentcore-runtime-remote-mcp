@@ -9,6 +9,7 @@ def deploy_mcp_server(
     cognito_discovery_url: str,
     role_arn: str,
     agent_name: str,
+    env_vars: dict,
     entrypoint: str = "./src/mcp_server.py",
     requirements_file: str = "./pyproject.toml",
     region: str = "us-west-2",
@@ -23,7 +24,7 @@ def deploy_mcp_server(
     }
 
     print("Configuring AgentCore Runtime...")
-    response = agentcore_runtime.configure(
+    agentcore_runtime.configure(
         entrypoint=entrypoint,
         execution_role=role_arn,
         auto_create_ecr=True,
@@ -37,7 +38,9 @@ def deploy_mcp_server(
 
     print("Launching MCP server to AgentCore Runtime...")
     print("This may take several minutes...")
-    launch_result = agentcore_runtime.launch()
+    launch_result = agentcore_runtime.launch(
+        env_vars={"OPENAI_API_KEY": env_vars.get("OPENAI_API_KEY")},
+    )
     print("Launch completed ✓\n")
     print(f"Agent ARN: {launch_result.agent_arn}")
     print(f"Agent ID: {launch_result.agent_id}")
@@ -54,10 +57,24 @@ def main() -> None:
     agent_name = os.getenv(
         "AGENT_NAME"
     )  # Must start with a letter, contain only letters/numbers/underscores, and be 1-48 characters long.
-    if not (cognito_client_id and cognito_discovery_url and role_arn and agent_name):
+    openai_api_key = os.getenv("OPENAI_API_KEY")
+
+    if not (
+        cognito_client_id
+        and cognito_discovery_url
+        and role_arn
+        and agent_name
+        and openai_api_key
+    ):
         raise ValueError("Required environment variables are not set.")
 
-    deploy_mcp_server(cognito_client_id, cognito_discovery_url, role_arn, agent_name)
+    deploy_mcp_server(
+        cognito_client_id,
+        cognito_discovery_url,
+        role_arn,
+        agent_name,
+        {"OPENAI_API_KEY": openai_api_key},
+    )
 
 
 if __name__ == "__main__":
