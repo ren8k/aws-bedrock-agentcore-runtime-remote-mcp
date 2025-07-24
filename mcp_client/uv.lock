@@ -488,7 +488,6 @@ source = { virtual = "." }
 dependencies = [
     { name = "boto3" },
     { name = "mcp" },
-    { name = "strands-agents" },
     { name = "strands-agents-tools" },
     { name = "streamlit" },
 ]
@@ -497,7 +496,6 @@ dependencies = [
 requires-dist = [
     { name = "boto3", specifier = ">=1.39.9" },
     { name = "mcp", specifier = "==1.11.0" },
-    { name = "strands-agents", specifier = ">=1.0.1" },
     { name = "strands-agents-tools", specifier = ">=0.2.1" },
     { name = "streamlit", specifier = ">=1.47.0" },
 ]
