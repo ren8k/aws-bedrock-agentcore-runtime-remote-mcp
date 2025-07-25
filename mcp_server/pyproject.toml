@@ -11,6 +11,6 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "bedrock-agentcore-starter-toolkit>=0.1.0",
-    "boto3>=1.39.9",
+    "bedrock-agentcore-starter-toolkit>=0.1.2",
+    "boto3>=1.39.12",
 ]
