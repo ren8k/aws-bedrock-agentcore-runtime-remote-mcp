@@ -7,6 +7,28 @@ from dotenv import load_dotenv
 def setup_cognito_user_pool(
     username: str, temp_password: str, password: str, region: str = "us-west-2"
 ) -> dict:
+    """
+    Set up a new AWS Cognito User Pool with a test user and app client.
+
+    This function creates a complete Cognito setup including:
+    - A new User Pool with password policy
+    - An app client configured for user/password authentication
+    - A test user with permanent password
+    - Initial authentication to obtain an access token
+
+    Args:
+        username: The username for the test user
+        temp_password: The temporary password for initial user creation
+        password: The permanent password to set for the user
+        region: AWS region where the User Pool will be created (default: us-west-2)
+
+    Returns:
+        dict: A dictionary containing:
+            - pool_id: The ID of the created User Pool
+            - client_id: The ID of the created app client
+            - bearer_token: The access token from initial authentication
+            - discovery_url: The OpenID Connect discovery URL for the User Pool
+    """
     # Initialize Cognito client
     cognito_client = boto3.client("cognito-idp", region_name=region)
 
