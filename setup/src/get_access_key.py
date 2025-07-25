@@ -8,16 +8,16 @@ def cognito_authenticate(
     username: str, password: str, client_id: str, region: str = "us-west-2"
 ) -> dict:
     """
-    AWS Cognitoでユーザー認証を行う関数
+    Function to authenticate a user with AWS Cognito
 
     Args:
-        username (str): ユーザー名
-        password (str): パスワード
-        client_id (str): CognitoアプリクライアントID
-        region (str): AWSリージョン（デフォルトはus-west-2）
+        username (str): Username
+        password (str): Password
+        client_id (str): Cognito app client ID
+        region (str): AWS region (default is us-west-2)
 
     Returns:
-        dict: 認証結果（成功時）
+        dict: Authentication result (on success)
     """
 
     client = boto3.client("cognito-idp", region_name=region)
@@ -38,13 +38,13 @@ def cognito_authenticate(
 
 def get_access_key(response: dict) -> str:
     """
-    認証結果からアクセストークンを取得する関数
+    Function to retrieve the access token from authentication result
 
     Args:
-        response (dict): Cognitoの認証レスポンス
+        response (dict): Cognito authentication response
 
     Returns:
-        str: アクセストークン
+        str: Access token
     """
     auth_result = response.get("AuthenticationResult", {})
     return auth_result.get("AccessToken", None)
