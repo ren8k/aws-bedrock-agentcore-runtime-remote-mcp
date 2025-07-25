@@ -15,18 +15,21 @@ def main() -> None:
     load_dotenv()
     agent_arn = os.getenv("AGENT_ARN")
     bearer_token = os.getenv("COGNITO_ACCESS_TOKEN")
-    mcp_server_endpoint = get_mcp_endpoint(agent_arn)
+    mcp_endpoint = get_mcp_endpoint(agent_arn)
 
     mcp_client = MCPClient(
         lambda: streamablehttp_client(
-            mcp_server_endpoint, headers={"Authorization": f"Bearer {bearer_token}"}
+            mcp_endpoint, headers={"Authorization": f"Bearer {bearer_token}"}
         )
     )
 
-    with mcp_client:
-        tools = mcp_client.list_tools_sync()
-        agent = Agent(tools=tools)
-        agent("1+2は？")
+    try:
+        with mcp_client:
+            tools = mcp_client.list_tools_sync()
+            agent = Agent(tools=tools)
+            agent("LangGraphにおけるMCPの実装方法 (python) について調べて")
+    except Exception as e:
+        raise RuntimeError(f"Failed to connect to MCP server or execute agent: {e}")
 
 
 if __name__ == "__main__":
