@@ -6,3 +6,5 @@
   - `.bedrock_agentcore.yaml`
   - `Dockerfile`
   - `.dockerignore`
+
+https://github.com/modelcontextprotocol/python-sdk/issues/1144
