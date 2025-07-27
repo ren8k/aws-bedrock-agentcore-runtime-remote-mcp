@@ -98,8 +98,8 @@ def main() -> None:
     response = setup_cognito_user_pool(username, temp_password, password)
     # Output the required values
     print(f"Pool id: {response.get('pool_id')}")
-    print(f"Discovery URL: {response.get('discovery_url')}")
     print(f"Client ID: {response.get('client_id')}")
+    print(f"Discovery URL: {response.get('discovery_url')}")
     print(f"Bearer Token: {response.get('bearer_token')}")
 
 
