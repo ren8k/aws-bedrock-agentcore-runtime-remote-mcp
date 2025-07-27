@@ -27,7 +27,7 @@ def main() -> None:
         with mcp_client:
             tools = mcp_client.list_tools_sync()
             agent = Agent(tools=tools)
-            agent("LangGraphにおけるMCPの実装方法 (python) について調べて")
+            agent("LangGraphにおけるMCPの実装方法 (python) について調べて. ")
     except Exception as e:
         raise RuntimeError(f"Failed to connect to MCP server or execute agent: {e}")
 
