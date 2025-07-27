@@ -4,13 +4,19 @@ from mcp.server.fastmcp import FastMCP
 from openai import OpenAI
 from pydantic import Field
 
+INSTRUCTIONS = """
+- You must answer the question using web_search tool.
+- You must respond in japanese.
+- **CRITICAL: Avoid \x85 and similar Line Break Characters in your response.**
+"""
+
 mcp = FastMCP(name="openai-web-search-mcp-server", host="0.0.0.0", stateless_http=True)
 
 
 @mcp.tool()
 def openai_web_search(
     question: str = Field(
-        description="A question text to be sent to OpenAI gpt-4.1. It supports natural language queries. Write in Japanese."
+        description="A question text to be sent to OpenAI o3. It supports natural language queries. Write in Japanese."
     ),
 ) -> str:
     """An AI agent with advanced web search capabilities. Useful for finding the latest information, troubleshooting errors, and discussing ideas or design challenges. Supports natural language queries.
@@ -24,9 +30,9 @@ def openai_web_search(
     try:
         client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         response = client.responses.create(
-            model="gpt-4.1",
+            model="o3",
             tools=[{"type": "web_search_preview", "search_context_size": "low"}],
-            instructions="You must answer the question using web_search tool.You must respond in japanese.",
+            instructions=INSTRUCTIONS,
             input=question,
         )
         return response.output_text
