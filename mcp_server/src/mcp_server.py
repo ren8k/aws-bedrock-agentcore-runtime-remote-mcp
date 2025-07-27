@@ -31,7 +31,7 @@ def openai_web_search(
         client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         response = client.responses.create(
             model="o3",
-            tools=[{"type": "web_search_preview", "search_context_size": "low"}],
+            tools=[{"type": "web_search_preview"}],
             instructions=INSTRUCTIONS,
             input=question,
         )
