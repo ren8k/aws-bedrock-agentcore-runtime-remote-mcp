@@ -7,7 +7,7 @@ from pydantic import Field
 INSTRUCTIONS = """
 - You must answer the question using web_search tool.
 - You must respond in japanese.
-- **CRITICAL: Avoid \x85 and similar Line Break Characters in your response.**
+- **CRITICAL: Avoid using `\x85` and similar line break characters in your response.**
 """
 
 mcp = FastMCP(name="openai-web-search-mcp-server", host="0.0.0.0", stateless_http=True)
