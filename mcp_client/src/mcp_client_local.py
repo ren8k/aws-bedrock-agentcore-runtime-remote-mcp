@@ -21,6 +21,7 @@ async def main():
             print("Available tools:")
             for tool in tool_result.tools:
                 print(f"  - {tool.name}: {tool.description}")
+                print(f"    InputSchema: {tool.inputSchema.get('properties')}")
 
 
 if __name__ == "__main__":
