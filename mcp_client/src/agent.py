@@ -19,7 +19,9 @@ def main() -> None:
 
     mcp_client = MCPClient(
         lambda: streamablehttp_client(
-            mcp_endpoint, headers={"Authorization": f"Bearer {bearer_token}"}
+            mcp_endpoint,
+            headers={"Authorization": f"Bearer {bearer_token}"},
+            timeout=300,
         )
     )
 
