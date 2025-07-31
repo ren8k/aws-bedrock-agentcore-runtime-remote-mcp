@@ -5,6 +5,8 @@ from mcp.client.streamable_http import streamablehttp_client
 from strands import Agent
 from strands.tools.mcp import MCPClient
 
+PROMPT = "LangGraphにおけるMCPの実装方法 (python) について調べて. "
+
 
 def get_mcp_endpoint(agent_arn: str, region: str = "us-west-2") -> str:
     encoded_arn = agent_arn.replace(":", "%3A").replace("/", "%2F")
@@ -34,7 +36,7 @@ def main() -> None:
         with mcp_client:
             tools = mcp_client.list_tools_sync()
             agent = Agent(tools=tools)
-            agent("LangGraphにおけるMCPの実装方法 (python) について調べて. ")
+            agent(PROMPT)
     except Exception as e:
         raise RuntimeError(f"Failed to connect to MCP server or execute agent: {e}")
 
