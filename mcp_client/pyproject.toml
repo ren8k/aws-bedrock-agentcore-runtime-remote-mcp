@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "boto3>=1.39.9",
-    "mcp==1.11.0",
+    "mcp==1.12.2",
     "strands-agents-tools>=0.2.1",
     "streamlit>=1.47.0",
 ]
