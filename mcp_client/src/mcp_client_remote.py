@@ -61,6 +61,7 @@ async def main():
     headers = {
         "authorization": f"Bearer {bearer_token}",
         "Content-Type": "application/json",
+        "Accept": "application/json, text/event-stream",
     }
 
     print(f"\nConnect to: {mcp_endpoint}")

@@ -16,11 +16,16 @@ def main() -> None:
     agent_arn = os.getenv("AGENT_ARN")
     bearer_token = os.getenv("COGNITO_ACCESS_TOKEN")
     mcp_endpoint = get_mcp_endpoint(agent_arn)
+    headers = {
+        "authorization": f"Bearer {bearer_token}",
+        # "Content-Type": "application/json",
+        # "Accept": "application/json, text/event-stream",
+    }
 
     mcp_client = MCPClient(
         lambda: streamablehttp_client(
             mcp_endpoint,
-            headers={"Authorization": f"Bearer {bearer_token}"},
+            headers=headers,
             timeout=300,
         )
     )
