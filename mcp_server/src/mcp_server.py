@@ -32,9 +32,6 @@ def openai_o3_web_search(
         response = client.responses.create(
             model="o3",
             tools=[{"type": "web_search_preview"}],
-            reasoning={
-                "effort": "low"
-            },  # avoid mcp's bug (To complete the response within 1 minute)
             instructions=INSTRUCTIONS,
             input=question,
         )
