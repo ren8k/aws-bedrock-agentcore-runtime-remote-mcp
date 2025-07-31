@@ -1,6 +1,16 @@
-# AWS Bedrock Agent Runtime Remote MCP
+# AWS Bedrock AgentCore Runtime Remote MCP
 
-AWS Bedrock を使用したリモート MCP（Model Context Protocol）サーバーとクライアントの実装プロジェクトです。OpenAI o3 モデルを活用した Web 検索機能付きの AI エージェントを提供します。
+OpenAI o3 と Web Search を組み合わせた MCP（Model Context Protocol）サーバーを AWS Bedrock AgentCore Runtime にデプロイし、Strands Agents や Claude Code から利用可能にするプロジェクトです。
+
+## アーキテクチャ
+
+本プロジェクトでは、以下のアーキテクチャで構成されています：
+
+1. **MCP Server**: OpenAI o3 + Web Search 機能を提供する FastMCP サーバー
+2. **AgentCore Runtime**: MCP サーバーをホストする AWS マネージドサービス
+3. **MCP Clients**: Strands Agents、Claude Code、またはカスタム実装からの接続
+
+![Architecture](./assets/architecture.png)
 
 ## プロジェクト構成
 
@@ -47,41 +57,72 @@ AWS 環境のセットアップとリソース作成を行うツール群です�
 - `boto3>=1.39.9`
 - `python-dotenv>=1.1.1`
 
-## 開始方法
+## セットアップ手順
 
 ### 前提条件
 
-- Python 3.12 以上
-- AWS CLI の設定完了
-- 適切な AWS 権限
+- **開発環境**: ARM アーキテクチャ（AgentCore Runtime の要件）
+- **AMI 推奨**: AWS Deep Learning AMI (Docker, AWS CLI プリインストール)
+- **Python**: 3.12 以上、[uv](https://docs.astral.sh/uv/) インストール済み
+- **OpenAI API Key**: o3 利用のため必要
 
-### セットアップ手順
+### Step 1: 環境変数の設定
 
-1. **AWS 環境のセットアップ**
+`.env.sample` をコピーして `.env` を作成し、以下の変数を設定：
 
 ```bash
-cd setup
-uv sync
-# 必要に応じてCognitoやIAMロールを設定
-uv run src/setup_cognito.py
-uv run src/create_role.py
+cp .env.sample .env
+# 以下を .env に設定
+OPENAI_API_KEY=your_openai_api_key
+COGNITO_USERNAME=testuser
+COGNITO_PASSWORD=YourPassword123!
+AGENT_NAME=your_agent_name
 ```
 
-2. **MCP サーバーのデプロイ**
+### Step 2: MCP サーバーの開発とテスト
 
 ```bash
 cd mcp_server
 uv sync
-uv run scripts/deploy_mcp_server.py
+# ローカルでのテスト実行
+uv run src/mcp_server.py
+
+# 別ターミナルでクライアントテスト
+cd ../mcp_client
+uv sync
+uv run src/mcp_client_local.py
 ```
 
-3. **MCP クライアントの起動**
+### Step 3: AWS リソースのセットアップ
 
 ```bash
-cd mcp_client
+cd ../setup
 uv sync
-# 環境変数を設定後
-streamlit run src/app.py
+
+# Cognito User Pool と認証情報の作成
+uv run src/setup_cognito.py
+# 出力された Client ID, Discovery URL, Bearer Token を .env に追加
+
+# IAM ロールの作成
+uv run src/create_role.py
+# 出力された Role ARN を .env に追加
+```
+
+### Step 4: AgentCore Runtime へのデプロイ
+
+```bash
+cd ../mcp_server
+# MCP サーバーを AgentCore Runtime にデプロイ
+uv run scripts/deploy_mcp_server.py
+# 出力された Agent ARN を .env に追加
+```
+
+### Step 5: Remote MCP サーバーの動作確認
+
+```bash
+cd ../mcp_client
+# Remote MCP サーバーとの接続テスト
+uv run src/mcp_client_remote.py
 ```
 
 ## 主な機能
