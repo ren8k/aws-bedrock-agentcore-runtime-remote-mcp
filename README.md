@@ -1,16 +1,29 @@
 # AWS Bedrock AgentCore Runtime Remote MCP
 
-OpenAI o3 と Web Search を組み合わせた MCP（Model Context Protocol）サーバーを AWS Bedrock AgentCore Runtime にデプロイし、Strands Agents や Claude Code から利用可能にするプロジェクトです。
+OpenAI o3 と Web Search を組み合わせた MCP（Model Context Protocol）サーバーを AWS Bedrock AgentCore Runtime にデプロイし，Strands Agents や Claude Code から利用可能にするプロジェクトです．
+
+> [!NOTE]
+> 解説記事を公開しております．是非ご覧ください．
+> [Bedrock AgentCore Runtime で Remote MCP サーバー (OpenAI o3 Web search) をデプロイし，Strands Agents から利用する](https://qiita.com/ren8k/items/1ef730d343c870b71e50)
 
 ## アーキテクチャ
 
-本プロジェクトでは、以下のアーキテクチャで構成されています．
+本プロジェクトでは，以下のアーキテクチャで構成されています．
 
-1. MCP Server: OpenAI o3 + Web Search 機能を提供する FastMCP サーバー
+1. MCP Server: OpenAI o3 + Web Search 機能を提供する MCP サーバー
 2. AgentCore Runtime: MCP サーバーをホストする AWS マネージドサービス
-3. MCP Clients: Strands Agents、Claude Code、またはカスタム実装からの接続
+3. MCP Clients: Strands Agents，Claude Code，またはカスタム実装からの接続
 
 ![Architecture](./assets/architecture.png)
+
+## 実行環境
+
+- OS: Ubuntu Server 24.04 LTS
+- AMI: 01e1d8271212cd19a (Deep Learning OSS Nvidia Driver AMI GPU PyTorch 2.7)
+- Instance Type: m8g.xlarge (ARM)
+- Docker version: 28.3.2, build 578ccf6
+- uv version: 0.8.3
+- default region: us-west-2
 
 ## プロジェクト構成
 
@@ -18,7 +31,7 @@ OpenAI o3 と Web Search を組み合わせた MCP（Model Context Protocol）�
 
 ### 1. MCP Server (`mcp_server/`)
 
-AWS Bedrock Agent Runtime 上でホストされる MCP サーバーです。
+AWS Bedrock Agent Runtime 上でホストされる MCP サーバーです．
 
 - 主な機能: OpenAI o3 モデルを使用した Web 検索機能
 - エンドポイント: FastMCP フレームワークを使用
@@ -32,9 +45,9 @@ AWS Bedrock Agent Runtime 上でホストされる MCP サーバーです。
 
 ### 2. MCP Client (`mcp_client/`)
 
-リモート MCP サーバーと通信するクライアントアプリケーションです。
+リモート MCP サーバーと通信するクライアントアプリケーションです．
 
-- 主な機能: MCP サーバーとの通信、Streamlit ベースのユーザーインターフェース
+- 主な機能: MCP サーバーとの通信，Streamlit ベースのユーザーインターフェース
 - 接続方式: HTTP streaming 接続
 - UI: Streamlit アプリケーション
 
@@ -47,10 +60,10 @@ AWS Bedrock Agent Runtime 上でホストされる MCP サーバーです。
 
 ### 3. Setup (`setup/`)
 
-AWS 環境のセットアップとリソース作成を行うツール群です。
+AWS 環境のセットアップとリソース作成を行うツール群です．
 
-- 機能: Cognito 設定、IAM ロール作成、アクセスキー管理
-- 対応サービス: AWS Cognito、IAM
+- 機能: Cognito 設定，IAM ロール作成，アクセスキー管理
+- 対応サービス: AWS Cognito，IAM
 
 主な依存関係:
 
@@ -63,12 +76,12 @@ AWS 環境のセットアップとリソース作成を行うツール群です�
 
 - 開発環境: ARM アーキテクチャ（AgentCore Runtime の要件）
 - AMI 推奨: AWS Deep Learning AMI (Docker, AWS CLI プリインストール)
-- Python: 3.12 以上、[uv](https://docs.astral.sh/uv/) インストール済み
+- Python: 3.12 以上，[uv](https://docs.astral.sh/uv/) インストール済み
 - OpenAI API Key: o3 利用のため必要
 
 ### Step 1: 環境変数の設定
 
-`.env.sample` をコピーして `.env` を作成し、以下の変数を設定：
+`.env.sample` をコピーして `.env` を作成し，以下の変数を設定：
 
 ```bash
 cp .env.sample .env
@@ -123,24 +136,10 @@ uv run scripts/deploy_mcp_server.py
 cd ../mcp_client
 # Remote MCP サーバーとの接続テスト
 uv run src/mcp_client_remote.py
+# Strands Agents からの利用
+uv run src/agent.py
 ```
-
-## 主な機能
-
-- Web 検索 AI: OpenAI o3 モデルを使用した高度な Web 検索とリアルタイム情報取得
-- 日本語対応: 日本語での質問と回答に対応
-- AWS 統合: Bedrock Agent Runtime との完全統合
-- Streamlit UI: 使いやすい Web インターフェース
-- MCP 準拠: Model Context Protocol の標準仕様に準拠
-
-## 技術仕様
-
-- MCP Version: 1.12.2
-- Python: 3.12 以上
-- デプロイメント: Docker + AWS Bedrock
-- 通信プロトコル: HTTP Streaming
-- AI Model: OpenAI o3
 
 ## ライセンス
 
-このプロジェクトのライセンス情報については、`LICENSE`ファイルを参照してください。
+このプロジェクトのライセンス情報については，`LICENSE`ファイルを参照してください．
