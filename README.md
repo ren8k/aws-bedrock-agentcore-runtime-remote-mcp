@@ -56,7 +56,6 @@ AWS Bedrock Agent Runtime 上でホストされる MCP サーバーです．
 - `mcp==1.12.2`
 - `boto3>=1.39.9`
 - `strands-agents-tools>=0.2.1`
-- `streamlit>=1.47.0`
 
 ### 3. Setup (`setup/`)
 
