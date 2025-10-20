@@ -3,11 +3,10 @@ import os
 import time
 
 import boto3
-from boto3.session import Session
 from dotenv import load_dotenv
 
 
-def create_agentcore_role(agent_name: str) -> dict:
+def create_agentcore_role(agent_name: str, region: str = "us-west-2") -> dict:
     """Create an IAM role for the agent core.
 
     Args:
@@ -18,8 +17,6 @@ def create_agentcore_role(agent_name: str) -> dict:
     """
     client = boto3.client("iam")
     agentcore_role_name = f"agentcore-{agent_name}-role"
-    boto_session = Session()
-    region = boto_session.region_name
     account_id = boto3.client("sts").get_caller_identity()["Account"]
 
     role_policy = {
